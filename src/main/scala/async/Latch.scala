@@ -3,7 +3,7 @@ package async
 import chisel3._
 
 // Fancy dual rail half latch
-class Latch[T <: Data](A: T) extends Module {
+class Latch[T <: Data](A: T) extends Mod {
   val io = IO(new Bundle {
     val input = Input(Dual(A))
     val inputACK = Output(Bool())
@@ -15,7 +15,7 @@ class Latch[T <: Data](A: T) extends Module {
   val inputACK = RegInit(false.B)
   io.inputACK := inputACK
 
-  private val width = A.getWidth
+  val width = A.getWidth
   val inputACKs = Wire(Vec(width, Bool()))
   val latch0s = (0 until width).map(i => {
     val latch0 = Module(new Latch0)
@@ -31,7 +31,7 @@ class Latch[T <: Data](A: T) extends Module {
   io.inputACK := (0 until width).map(i => inputACKs(i)).reduce(_ && _)
 }
 
-class Latch0 extends Module {
+class Latch0 extends Mod {
   val io = IO(new Bundle {
     val input0 = Input(Bool())
     val input1 = Input(Bool())

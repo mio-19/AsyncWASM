@@ -2,7 +2,7 @@ package async
 
 import chisel3._
 
-class FD extends Module {
+class FD extends RawModule {
   val io = IO(new Bundle {
     val input0 = Input(Bool())
     val input1 = Input(Bool())
