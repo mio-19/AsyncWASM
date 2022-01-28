@@ -12,9 +12,6 @@ class Latch[T <: Data](A: T) extends Mod {
     val outputACK = Input(Bool())
   })
 
-  val inputACK = RegInit(false.B)
-  io.inputACK := inputACK
-
   val width = A.getWidth
   val inputACKs = Wire(Vec(width, Bool()))
   val latch0s = (0 until width).map(i => {
@@ -28,7 +25,7 @@ class Latch[T <: Data](A: T) extends Mod {
   })
 
   // todo: check me
-  io.inputACK := (0 until width).map(i => inputACKs(i)).reduce(_ && _)
+  io.inputACK := Mux(reset.asBool, false.B, (0 until width).map(i => inputACKs(i)).reduce(_ && _))
 }
 
 class Latch0 extends Mod {
@@ -42,12 +39,9 @@ class Latch0 extends Mod {
     val outputACK = Input(Bool())
   })
 
-  val input0 = RegInit(false.B)
-  input0 := io.input0
-  val input1 = RegInit(false.B)
-  input1 := io.input1
-  val outputACK_not = RegInit(false.B)
-  outputACK_not := !io.outputACK
+  val input0 = Mux(reset.asBool, false.B, io.input0)
+  val input1 = Mux(reset.asBool, false.B, io.input1)
+  val outputACK_not = Mux(reset.asBool, false.B, !io.outputACK)
 
   val c0 = Module(new C)
   c0.io.value1 := outputACK_not
