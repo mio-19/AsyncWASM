@@ -5,27 +5,31 @@ import chisel3._
 // Fancy dual rail half latch
 class Latch[T <: Data](A: T) extends Mod {
   val io = IO(new Bundle {
-    val input = Input(Dual(A))
+    val input = Input(Dual(Input(A)))
     val inputACK = Output(Bool())
 
-    val output = Output(Dual(A))
+    val output = Output(Dual(Output(A)))
     val outputACK = Input(Bool())
   })
 
   val width = A.getWidth
   val inputACKs = Wire(Vec(width, Bool()))
+  val outputZeros = Wire(Vec(width, Bool()))
+  val outputOnes = Wire(Vec(width, Bool()))
+  io.output.zeros := outputZeros.asTypeOf(A)
+  io.output.ones := outputOnes.asTypeOf(A)
   val latch0s = (0 until width).map(i => {
     val latch0 = Module(new Latch0)
     latch0.io.input0 := io.input.zeros.asUInt.apply(i)
     latch0.io.input1 := io.input.ones.asUInt.apply(i)
-    latch0.io.inputACK := inputACKs(i)
-    latch0.io.output0 := io.output.zeros.asUInt.apply(i)
-    latch0.io.output1 := io.output.ones.asUInt.apply(i)
+    inputACKs(i) := latch0.io.inputACK
+    outputZeros.apply(i) := latch0.io.output0
+    outputOnes.apply(i) := latch0.io.output1
     latch0.io.outputACK := io.outputACK
   })
 
   // todo: check me
-  io.inputACK := Mux(reset.asBool, false.B, (0 until width).map(i => inputACKs(i)).reduce(_ && _))
+  io.inputACK := (0 until width).map(i => inputACKs(i)).reduce(_ && _)
 }
 
 class Latch0 extends Mod {
@@ -50,7 +54,7 @@ class Latch0 extends Mod {
 
   val c1 = Module(new C)
   c1.io.value1 := outputACK_not
-  c1.io.value2 := io.input1
+  c1.io.value2 := input1
   io.output1 := c1.io.output
 
   io.inputACK := io.output0 || io.output1

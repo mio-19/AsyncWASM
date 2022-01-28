@@ -2,9 +2,9 @@ package async
 
 import chisel3._
 
-class Dual[T <: Data](A: => T) extends Bundle {
-  val zeros = A
-  val ones = A
+class Dual[T <: Data](A: T) extends Bundle {
+  val zeros = A.cloneType
+  val ones = A.cloneType
 
   assert(zeros.getWidth == ones.getWidth)
   assert(zeros.getWidth > 0)
@@ -15,5 +15,5 @@ class Dual[T <: Data](A: => T) extends Bundle {
 }
 
 object Dual {
-  def apply[T <: Data](A: => T): Dual[T] = new Dual[T](A)
+  def apply[T <: Data](A: T): Dual[T] = new Dual[T](A)
 }
