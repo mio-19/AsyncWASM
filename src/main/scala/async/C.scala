@@ -9,5 +9,9 @@ class C extends Module {
     val output = Output(Bool())
   })
 
-  io.output := io.value1 && io.output || io.value2 && io.output || io.value1 && io.value2
+  val output = Reg(Bool())
+
+  output := io.value1 && io.output || io.value2 && io.output || io.value1 && io.value2
+
+  io.output := output
 }

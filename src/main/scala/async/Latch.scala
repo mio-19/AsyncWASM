@@ -52,12 +52,12 @@ class Latch0 extends Module {
   val c0 = Module(new C)
   c0.io.value1 := outputACK_not
   c0.io.value2 := input0
-  c0.io.output := io.output0
+  io.output0 := c0.io.output
 
   val c1 = Module(new C)
-  c0.io.value1 := outputACK_not
-  c0.io.value2 := input1
-  c0.io.output := io.output1
+  c1.io.value1 := outputACK_not
+  c1.io.value2 := io.input1
+  io.output1 := c1.io.output
 
   io.inputACK := io.output0 || io.output1
 }
