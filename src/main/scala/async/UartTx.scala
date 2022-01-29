@@ -27,13 +27,15 @@ class UartTx(baudDivisor: Int) extends Module {
     start := true.B
   }
 
-  val valueACK = RegInit(Bool(), false.B)
+  val valueACK = Wire(Bool())
   io.valueACK := valueACK
   val RTZ = io.value.unsafeIsCleared && io.valueACK
-  // todo: check always @(posedge reset, posedge start, posedge RTZ)
+  // todo: emulate always @(posedge reset, posedge start, posedge RTZ)
   when (start) {
     valueACK := true.B
-  } .elsewhen(RTZ) {
+  } .elsewhen(RTZ || reset.asBool) {
     valueACK := false.B
+  } .otherwise {
+    valueACK := valueACK
   }
 }
