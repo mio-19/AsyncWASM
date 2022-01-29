@@ -17,8 +17,7 @@ class Latch[T <: Data](A: T) extends Mod {
   io.output.dual.zeros := outputZeros.asTypeOf(A)
   io.output.dual.ones := outputOnes.asTypeOf(A)
   val latch0s = (0 until width).map(i => {
-    val latch0 = new Latch0Part
-    latch0.io.reset := reset
+    val latch0 = Module(new Latch0)
     latch0.io.input0 := io.input.dual.zeros.asUInt.apply(i)
     latch0.io.input1 := io.input.dual.ones.asUInt.apply(i)
     inputACKs(i) := latch0.io.inputACK
@@ -31,8 +30,6 @@ class Latch[T <: Data](A: T) extends Mod {
   io.input.ack := (0 until width).map(i => inputACKs(i)).reduce(_ && _)
 }
 
-
-/*
 class Latch0 extends Mod {
   val io = IO(new Bundle {
     val input0 = Input(Bool())
@@ -47,36 +44,6 @@ class Latch0 extends Mod {
   val input0 = Mux(reset.asBool, false.B, io.input0)
   val input1 = Mux(reset.asBool, false.B, io.input1)
   val outputACK_not = Mux(reset.asBool, false.B, !io.outputACK)
-
-  val c0 = Module(new C)
-  c0.io.value1 := outputACK_not
-  c0.io.value2 := input0
-  io.output0 := c0.io.output
-
-  val c1 = Module(new C)
-  c1.io.value1 := outputACK_not
-  c1.io.value2 := input1
-  io.output1 := c1.io.output
-
-  io.inputACK := io.output0 || io.output1
-}
-*/
-
-class Latch0Part extends Bundle {
-  val io = new Bundle {
-    val reset = Wire(Bool()) // Input
-    val input0 = Wire(Bool()) // Input
-    val input1 = Wire(Bool()) // Input
-    val inputACK = Wire(Bool()) // Output
-
-    val output0 = Wire(Bool()) // Output
-    val output1 = Wire(Bool()) // Output
-    val outputACK = Wire(Bool()) // Input
-  }
-
-  val input0 = Mux(io.reset, false.B, io.input0)
-  val input1 = Mux(io.reset, false.B, io.input1)
-  val outputACK_not = Mux(io.reset, false.B, !io.outputACK)
 
   val c0 = Module(new C)
   c0.io.value1 := outputACK_not
