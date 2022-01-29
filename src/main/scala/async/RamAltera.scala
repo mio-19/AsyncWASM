@@ -42,7 +42,6 @@ class RamAltera2port1clock(addrBits: Int, dataBits: Int = 8) extends Module {
   l2.io.input <> io.port2.cmd
   val port2cmd = l2.io.output
 
-
   io.ipCore.clock := clock
   io.ipCore.address_a := port1cmd.unsafeExtract.addr
   io.ipCore.data_a := port1cmd.unsafeExtract.writeData
@@ -54,17 +53,4 @@ class RamAltera2port1clock(addrBits: Int, dataBits: Int = 8) extends Module {
   val port_b_en = RegInit(Bool(), false.B)
   io.ipCore.rden_b := Mux(port_b_en, !port2cmd.unsafeExtract.write, false.B)
   io.ipCore.wren_b := Mux(port_b_en, port2cmd.unsafeExtract.write, false.B)
-
-  when(port1cmd.unsafeGotData) {
-    port_a_en := true.B
-  } .otherwise {
-    port_a_en := false.B
-  }
-
-  when(port2cmd.unsafeGotData) {
-    port_b_en := true.B
-  } .otherwise {
-    port_b_en := false.B
-  }
-
 }

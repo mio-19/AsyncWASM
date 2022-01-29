@@ -27,3 +27,12 @@ object ChannelIn {
 object ChannelOut {
   def apply[T <: Data](A: T) = Flipped(new ChannelIn[T](A))
 }
+
+class ChannelCall[T <: Data, U <: Data](A: T, B: U) extends Bundle {
+  val in = ChannelIn(A)
+  val out = ChannelOut(B)
+}
+
+object ChannelCall {
+  def apply[T <: Data, U <: Data](A: T, B: U) = new ChannelCall[T, U](A, B)
+}

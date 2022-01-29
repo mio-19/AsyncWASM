@@ -2,7 +2,7 @@ package async
 
 import chisel3._
 
-class SyncToAsync[T <: Data](A: T) extends Module {
+class SyncToAsyncChannelIn[T <: Data](A: T) extends Module {
   val io = IO(new Bundle {
     val async = ChannelIn(A)
 

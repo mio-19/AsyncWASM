@@ -14,7 +14,7 @@ class UartTx(baudDivisor: Int) extends Module {
   })
 
   val u0 = Module(new UartTxSync(baudDivisor))
-  val s0 = Module(new SyncToAsync(UInt(8.W)))
+  val s0 = Module(new SyncToAsyncChannelIn(UInt(8.W)))
   io.txd := u0.io.txd
   u0.io.data := s0.io.data
   u0.io.start := s0.io.enable
