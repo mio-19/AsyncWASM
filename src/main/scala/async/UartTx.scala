@@ -1,7 +1,7 @@
 package async
 
 import chisel3._
-import sync.UartTxSync
+import sync._
 
 class UartTx(baudDivisor: Int) extends Module {
   def this(clkHz: Int, baud: Int) {
@@ -15,12 +15,11 @@ class UartTx(baudDivisor: Int) extends Module {
   })
 
   val u0 = Module(new UartTxSync(baudDivisor))
-  io.txd := u0.txd
+  io.txd := u0.io.txd
   val s0 = Module(new SyncToAsync(UInt(8.W)))
-  s0.reset := reset
   u0.io.data := s0.io.data
   u0.io.start := s0.io.enable
   s0.io.busy := u0.io.busy
 
-  s0.async <> io.value
+  s0.io.async <> io.value
 }
