@@ -20,26 +20,26 @@ class UartTx(baudDivisor: Int) extends Module {
 
   val u0 = Module(new UartTxSync(baudDivisor))
   io.txd := u0.io.txd
-  u0.io.data := value.unsafeExtract
   val busy = u0.io.busy
   val start = RegInit(Bool(), false.B)
   u0.io.start := start
+  val data = RegInit(UInt(8.W), 0.U)
+  u0.io.data := data
 
   when(start) {
     start := false.B
-  }.elsewhen(value.unsafeGotData && !busy) {
+  }.elsewhen(value.unsafeGotDataFor1Cycle && !busy) {
     start := true.B
+    data := value.unsafeExtract
   }
-
-  val startNext = RegNext(start)
 
   val valueACK = Wire(Bool())
   value.ack := valueACK
   when(reset.asBool) {
     valueACK := false.B
-  }.elsewhen(startNext) {
+  }.elsewhen(start) {
     valueACK := true.B
-  }.elsewhen(value.unsafeIsRTZ) {
+  }.elsewhen(value.unsafeIsRTZFor1Cycle) {
     valueACK := false.B
   }.otherwise {
     valueACK := valueACK
