@@ -13,4 +13,5 @@ object VerilogMain extends App {
   gen(new Latch(UInt(32.W)))
   gen(new And)
   gen(new Or)
+  gen(new sync.UartTx(200000000,9600))
 }
