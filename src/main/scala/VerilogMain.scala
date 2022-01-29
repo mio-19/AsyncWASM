@@ -9,7 +9,6 @@ object VerilogMain extends App {
 
   gen(new C)
   gen(new FD)
-  gen(new Latch0)
   gen(new Latch(UInt(32.W)))
   gen(new And)
   gen(new Or)
