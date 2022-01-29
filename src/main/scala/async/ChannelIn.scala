@@ -15,6 +15,9 @@ class ChannelIn[T <: Data](A: T) extends Bundle {
   def unsafeIsRTZ: Bool = dual.unsafeIsCleared && ack
 
   def unsafeGotData: Bool = dual.unsafeIsValid && !ack
+
+  // for ChannelOut
+  def unsafeWrite(x: T): Unit = dual.unsafeWrite(x)
 }
 
 object ChannelIn {

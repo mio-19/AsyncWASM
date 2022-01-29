@@ -9,13 +9,20 @@ class Dual[T <: Data](A: T) extends Bundle {
   assert(zeros.getWidth == ones.getWidth)
   assert(zeros.getWidth > 0)
 
-  def unsafeIsCleared: Bool = VecInit(zeros,ones).asUInt === 0.U
+  def unsafeIsCleared: Bool = VecInit(zeros, ones).asUInt === 0.U
 
   def unsafeIsValid: Bool = (0 until zeros.getWidth).map(i => zeros.asUInt.apply(i) || ones.asUInt.apply(i)).reduce(_ && _)
 
   def unsafeExtract: T = ones
 
-  def write(x: T) = ???
+  def unsafeWrite(x: T): Unit = {
+    val width = zeros.getWidth
+    val zerov = zeros.asTypeOf(Vec(width, Bool()))
+    val onev = ones.asTypeOf(Vec(width, Bool()))
+    for (i <- 0 until width) {
+      Mux(x.asUInt.apply(i), onev, zerov) := true.B
+    }
+  }
 }
 
 object Dual {
