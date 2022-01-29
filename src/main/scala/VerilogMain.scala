@@ -13,7 +13,7 @@ object VerilogMain extends App {
   gen(new Lat(UInt(32.W)))
   gen(new And)
   gen(new Or)
-  gen(new sync.UartTxSync(200000000, 9600))
+  gen(new UartTxSync(200000000, 9600))
   gen(new SyncToAsync(UInt(32.W)))
   gen(new UartTx(200000000, 9600))
   gen(new FIFO(64, UInt(32.W)))

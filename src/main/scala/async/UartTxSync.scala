@@ -1,4 +1,4 @@
-package sync
+package async
 
 import chisel3._
 import chisel3.util.MixedVecInit
@@ -21,7 +21,10 @@ class UartTxSync(baudDivisor: Int) extends Module {
   val txd = RegInit(Bool(), true.B)
   io.txd := txd
 
-  val shifterTxd = Wire(new ShifterTxd)
+  val shifterTxd = Wire(new Bundle {
+    val shifter = UInt(10.W)
+    val txd = Bool()
+  })
   shifterTxd.shifter := shifter
   shifterTxd.txd := txd
 
@@ -49,15 +52,10 @@ class UartTxSync(baudDivisor: Int) extends Module {
   }
     .otherwise {
       when(doSample) {
-        shifterTxd := (shifterTxd.asUInt >> 1).asTypeOf(new ShifterTxd);
+        shifterTxd := (shifterTxd.asUInt >> 1).asTypeOf(shifterTxd.cloneType);
         when(VecInit(shifter.asBools.slice(1, 10)).asUInt === 0.U) {
           busy := false.B
         }
       }
     }
-}
-
-class ShifterTxd extends Bundle {
-  val shifter = UInt(10.W)
-  val txd = Bool()
 }
