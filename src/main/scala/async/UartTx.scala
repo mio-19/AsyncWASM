@@ -32,8 +32,15 @@ class UartTx(baudDivisor: Int) extends Module {
     start := true.B
   }
 
+  // State 0 start=F enStart=T valueACK=F
+  // State 1 start=T enStart=T valueACK=F gotData
+  // State 1.5 start=T enStart=F valueACK=F gotData
+  // State 2 start=F enStart=F valueACK=F gotData
+  // State 2.5 start=F enStart=F valueACK=T gotData
+  // State 3 start=F enStart=F valueACK=T isRTZ
+  // State 3.5 start=F enStart=T valueACK=F isRTZ
   when(reset.asBool) {
-    enStart := true.B
+    enStart := true.B // State 0
   }.elsewhen(start) { // State 1
     enStart := false.B
   }.elsewhen(value.unsafeIsRTZ) { // State 3
