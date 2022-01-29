@@ -9,9 +9,11 @@ class Dual[T <: Data](A: T) extends Bundle {
   assert(zeros.getWidth == ones.getWidth)
   assert(zeros.getWidth > 0)
 
-  def isCleared: Bool = !(0 until zeros.getWidth).map(i => zeros.asUInt.apply(i) || ones.asUInt.apply(i)).reduce(_ || _)
+  def unsafeIsCleared: Bool = VecInit(zeros,ones).asUInt === 0.U
 
-  def isValid: Bool = (0 until zeros.getWidth).map(i => zeros.asUInt.apply(i) || ones.asUInt.apply(i)).reduce(_ && _)
+  def unsafeIsValid: Bool = (0 until zeros.getWidth).map(i => zeros.asUInt.apply(i) || ones.asUInt.apply(i)).reduce(_ && _)
+
+  def unsafeExtract: T = ones
 }
 
 object Dual {

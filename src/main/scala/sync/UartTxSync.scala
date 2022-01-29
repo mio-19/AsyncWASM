@@ -5,7 +5,7 @@ import chisel3.util.MixedVecInit
 import chisel3.experimental.BundleLiterals._
 
 // based on https://github.com/pConst/basic_verilog/blob/a1608c2326c057dbe4831e7e5e68ee2c1a769f9b/uart_tx.sv
-class UartTx(baudDivisor: Int) extends Module {
+class UartTxSync(baudDivisor: Int) extends Module {
   def this(clkHz: Int, baud: Int) {
     this(clkHz / baud)
   }
