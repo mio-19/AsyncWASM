@@ -31,11 +31,13 @@ class UartTx(baudDivisor: Int) extends Module {
     start := true.B
   }
 
+  val startNext = RegNext(start)
+
   val valueACK = Wire(Bool())
   value.ack := valueACK
   when(reset.asBool) {
     valueACK := false.B
-  }.elsewhen(start) {
+  }.elsewhen(startNext) {
     valueACK := true.B
   }.elsewhen(value.unsafeIsRTZ) {
     valueACK := false.B
