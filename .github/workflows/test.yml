@@ -27,3 +27,7 @@ jobs:
         run: mill _.test
       - name: Generate Verilog
         run: sbt 'test:runMain VerilogMain'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: verilog
+          path: target/verilog/**
