@@ -16,6 +16,19 @@ class RamAltera2port1clockIP(addrBits: Int, dataBits: Int = 8) extends Bundle {
   val q_b = Output(UInt(dataBits.W))
 }
 
-class RamAltera extends Bundle {
+class RamRead(addrBits: Int, dataBits: Int = 8) extends Bundle {
+  val addr = ChannelIn(UInt(addrBits.W))
+  val data = ChannelOut(UInt(dataBits.W))
+}
 
+class Ram(addrBits: Int, dataBits: Int = 8) extends Bundle {
+}
+
+
+class RamAltera2port1clock(addrBits: Int, dataBits: Int = 8) extends Module {
+  val io = IO(new Bundle {
+    val ipCore = Flipped(new RamAltera2port1clockIP(addrBits, dataBits))
+
+
+  })
 }
