@@ -2,7 +2,6 @@ package sync
 
 import chisel3._
 import chisel3.util.MixedVecInit
-import chisel3.experimental.BundleLiterals._
 
 // based on https://github.com/pConst/basic_verilog/blob/a1608c2326c057dbe4831e7e5e68ee2c1a769f9b/uart_tx.sv
 class UartTxSync(baudDivisor: Int) extends Module {
@@ -18,16 +17,14 @@ class UartTxSync(baudDivisor: Int) extends Module {
     val txd = Output(Bool())
   })
 
-  val ShifterTxd = new Bundle {
-    val shifter = UInt(10.W)
-    val txd = Bool()
-  }
-
-  val shifterTxd = RegInit(ShifterTxd, ShifterTxd.Lit(_.shifter -> 0.U, _.txd -> true.B))
-
-  val shifter = shifterTxd.shifter
-  val txd = shifterTxd.txd
+  val shifter = RegInit(UInt(10.W), 0.U)
+  val txd = RegInit(Bool(), true.B)
   io.txd := txd
+
+  val shifterTxd = Wire(new ShifterTxd)
+  shifterTxd.shifter := shifter
+  shifterTxd.txd := txd
+
   val sampleCntr = RegInit(UInt(16.W), (baudDivisor - 1).U)
 
   when(sampleCntr === 0.U) {
@@ -52,10 +49,15 @@ class UartTxSync(baudDivisor: Int) extends Module {
   }
     .otherwise {
       when(doSample) {
-        shifterTxd := (shifterTxd.asUInt >> 1).asTypeOf(ShifterTxd);
+        shifterTxd := (shifterTxd.asUInt >> 1).asTypeOf(new ShifterTxd);
         when(VecInit(shifter.asBools.slice(1, 10)).asUInt === 0.U) {
           busy := false.B
         }
       }
     }
+}
+
+class ShifterTxd extends Bundle {
+  val shifter = UInt(10.W)
+  val txd = Bool()
 }
