@@ -53,7 +53,7 @@ class UartTx(baudDivisor: Int) extends Module {
     .otherwise {
       when(doSample) {
         shifterTxd := (shifterTxd.asUInt >> 1).asTypeOf(ShifterTxd);
-        when(!VecInit(shifter.asBools).slice(1, 9).reduce(_ || _)) {
+        when(VecInit(shifter.asBools.slice(1, 10)).asUInt === 0.U) {
           busy := false.B
         }
       }
