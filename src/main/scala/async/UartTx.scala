@@ -23,7 +23,7 @@ class UartTx(baudDivisor: Int) extends Module {
 
   when(start) {
     start := false.B
-  }.elsewhen(io.value.unsafeIsValid && !busy && !io.value.ack) {
+  }.elsewhen(io.value.unsafeGotData && !busy) {
     start := true.B
   }
 

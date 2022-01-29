@@ -13,6 +13,8 @@ class ChannelIn[T <: Data](A: T) extends Bundle {
   def unsafeExtract: T = dual.unsafeExtract
 
   def unsafeIsRTZ: Bool = dual.unsafeIsCleared && ack
+
+  def unsafeGotData: Bool = dual.unsafeIsValid && !ack
 }
 
 object ChannelIn {
