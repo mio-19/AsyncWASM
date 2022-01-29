@@ -10,7 +10,7 @@ object VerilogMain extends App {
   gen(new C)
   gen(new FD)
   gen(new Lat0)
-  gen(new Latch(UInt(32.W)))
+  gen(new Lat(UInt(32.W)))
   gen(new And)
   gen(new Or)
   gen(new sync.UartTxSync(200000000, 9600))

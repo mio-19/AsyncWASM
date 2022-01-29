@@ -52,7 +52,7 @@ class UartTx(baudDivisor: Int) extends Module {
   value.ack := valueACK
   when(reset.asBool) {
     valueACK := false.B
-  }.elsewhen(!start && !enStart) { // State 2
+  }.elsewhen(!start && !enStart && !valueACK) { // State 2
     valueACK := true.B
   }.elsewhen(value.unsafeIsRTZ) { // State 3
     valueACK := false.B
