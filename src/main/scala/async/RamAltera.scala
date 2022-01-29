@@ -35,10 +35,10 @@ class RamAltera2port1clock(addrBits: Int, dataBits: Int = 8) extends Module {
     val port2 = new RamPort(addrBits, dataBits)
   })
 
-  val l1 = Module(new Latch(new RamRWCmd(addrBits, dataBits)))
+  val l1 = Module(new Lat(new RamRWCmd(addrBits, dataBits)))
   l1.io.input <> io.port1.cmd
   val port1cmd = l1.io.output
-  val l2 = Module(new Latch(new RamRWCmd(addrBits, dataBits)))
+  val l2 = Module(new Lat(new RamRWCmd(addrBits, dataBits)))
   l2.io.input <> io.port2.cmd
   val port2cmd = l2.io.output
 

@@ -14,7 +14,7 @@ class UartTx(baudDivisor: Int) extends Module {
     val txd = Output(Bool())
   })
 
-  val l0 = Module(new Latch(UInt(8.W)))
+  val l0 = Module(new Lat(UInt(8.W)))
   l0.io.input <> io.value
   val value = l0.io.output
 
