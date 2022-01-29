@@ -1,6 +1,7 @@
 package async
 
 import chisel3._
+import chisel3.experimental.BundleLiterals._
 
 class Dual[T <: Data](A: T) extends Bundle {
   val zeros = A.cloneType
@@ -27,4 +28,6 @@ class Dual[T <: Data](A: T) extends Bundle {
 
 object Dual {
   def apply[T <: Data](A: T): Dual[T] = new Dual[T](A)
+
+  def from[T <: Data](A: T): Dual[T] = (new Dual[T](A.cloneType)).Lit(_.zeros -> (~A.asUInt).asTypeOf(A), _.ones -> A)
 }
