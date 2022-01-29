@@ -3,6 +3,7 @@ package async
 import chisel3._
 
 // Fancy dual rail half latch
+// Please Rewrite this module
 class Lat[T <: Data](A: T) extends Mod {
   val io = IO(new Bundle {
     val input = ChannelIn(Input(A))
@@ -26,7 +27,7 @@ class Lat[T <: Data](A: T) extends Mod {
     latch0.io.outputACK := io.output.ack
   })
 
-  // todo: check me
+  // todo: this line has bugs.
   io.input.ack := (0 until width).map(i => inputACKs(i)).reduce(_ && _)
 }
 
