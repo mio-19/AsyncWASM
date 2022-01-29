@@ -16,12 +16,12 @@ class SyncToAsyncChannelIn[T <: Data](A: T) extends Module {
   l0.io.output <> async
   io.data := io.async.unsafeExtract
 
+  val enable = RegInit(Bool(), false.B)
   io.enable := enable
   val free = Wire(Bool())
   val ack = Wire(Bool())
   async.ack := ack
 
-  val enable = RegInit(Bool(), false.B)
   withReset(!free) {
     when(async.unsafeGotData && free && !io.busy) {
       enable := true.B
