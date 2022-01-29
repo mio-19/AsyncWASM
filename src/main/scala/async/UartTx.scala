@@ -23,23 +23,31 @@ class UartTx(baudDivisor: Int) extends Module {
   val busy = u0.io.busy
   val start = RegInit(Bool(), false.B)
   u0.io.start := start
-  val data = RegInit(UInt(8.W), 0.U)
-  u0.io.data := data
+  u0.io.data := value.unsafeExtract
 
+  val enStart = Wire(Bool())
   when(start) {
     start := false.B
-  }.elsewhen(value.unsafeGotDataFor1Cycle && !busy) {
+  }.elsewhen(value.unsafeGotData && enStart && !busy) {
     start := true.B
-    data := value.unsafeExtract
   }
 
+  when(reset.asBool) {
+    enStart := true.B
+  }.elsewhen(start) { // State 1
+    enStart := false.B
+  }.elsewhen(value.unsafeIsRTZ) { // State 3
+    enStart := true.B
+  }.otherwise {
+    enStart := enStart
+  }
   val valueACK = Wire(Bool())
   value.ack := valueACK
   when(reset.asBool) {
     valueACK := false.B
-  }.elsewhen(start) {
+  }.elsewhen(value.unsafeGotData && !start && !enStart) { // State 2
     valueACK := true.B
-  }.elsewhen(value.unsafeIsRTZFor1Cycle) {
+  }.elsewhen(value.unsafeIsRTZ) { // State 3
     valueACK := false.B
   }.otherwise {
     valueACK := valueACK
